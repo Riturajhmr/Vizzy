@@ -1,7 +1,10 @@
+import type { ZodType } from 'zod'
+import type { ModelId } from './config'
+
 export interface GenerateOptions {
   system: string
   messages: Array<{ role: 'user' | 'assistant'; content: string }>
-  model?: string
+  model?: ModelId | string
   temperature?: number
   maxTokens?: number
 }
@@ -16,15 +19,11 @@ export interface GenerateResult {
   }
 }
 
-export interface StreamOptions extends GenerateOptions {
-  onChunk?: (chunk: string) => void
-}
-
 export interface ObjectOptions<T> {
   system: string
   messages: Array<{ role: 'user' | 'assistant'; content: string }>
-  schema: T
-  model?: string
+  schema: ZodType<T>
+  model?: ModelId | string
 }
 
 export interface ImageOptions {
@@ -42,6 +41,13 @@ export interface ImageResult {
 export interface ChatStreamOptions {
   messages: Array<{ role: 'user' | 'assistant'; content: string }>
   system?: string
-  model?: string
+  model?: ModelId | string
   abortSignal?: AbortSignal
+}
+
+export interface ProviderAdapter {
+  generate: (options: GenerateOptions) => Promise<GenerateResult>
+  generateObject: <T>(options: ObjectOptions<T>) => Promise<T>
+  generateImage: (options: ImageOptions) => Promise<ImageResult>
+  streamChat: (options: ChatStreamOptions) => Response
 }

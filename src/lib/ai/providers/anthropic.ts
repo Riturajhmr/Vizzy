@@ -1,16 +1,23 @@
 import 'server-only'
-import { streamText, generateText } from 'ai'
+import { streamText, generateText, generateObject as sdkGenerateObject } from 'ai'
 import { createAnthropic } from '@ai-sdk/anthropic'
 import { env } from '@/lib/env'
-import type { GenerateOptions, GenerateResult, ImageOptions, ImageResult, ChatStreamOptions } from '../types'
-
-const DEFAULT_MODEL = 'claude-sonnet-4-6'
+import { MODELS } from '../config'
+import type {
+  GenerateOptions,
+  GenerateResult,
+  ImageOptions,
+  ImageResult,
+  ChatStreamOptions,
+  ObjectOptions,
+  ProviderAdapter,
+} from '../types'
 
 const anthropicClient = createAnthropic({ apiKey: env.ANTHROPIC_API_KEY })
 
-export const anthropicProvider = {
+export const anthropicProvider: ProviderAdapter = {
   generate: async (options: GenerateOptions): Promise<GenerateResult> => {
-    const model = options.model ?? DEFAULT_MODEL
+    const model = options.model ?? MODELS.DEFAULT
     const result = await generateText({
       model: anthropicClient(model),
       system: options.system,
@@ -29,9 +36,20 @@ export const anthropicProvider = {
     }
   },
 
+  generateObject: async <T>(options: ObjectOptions<T>): Promise<T> => {
+    const model = options.model ?? MODELS.DEFAULT
+    const result = await sdkGenerateObject({
+      model: anthropicClient(model),
+      system: options.system,
+      messages: options.messages,
+      schema: options.schema,
+    })
+    return result.object
+  },
+
   streamChat: (options: ChatStreamOptions): Response => {
     const result = streamText({
-      model: anthropicClient(options.model ?? DEFAULT_MODEL),
+      model: anthropicClient(options.model ?? MODELS.DEFAULT),
       ...(options.system !== undefined && { system: options.system }),
       messages: options.messages,
       ...(options.abortSignal !== undefined && { abortSignal: options.abortSignal }),

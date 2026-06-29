@@ -1,9 +1,10 @@
 export type { ApiResponse } from './api'
 export { successResponse, errorResponse } from './api'
+export type { Intent, IntentType } from './intent'
+export { intentSchema } from './intent'
 export type {
   Message,
   Asset,
-  Intent,
   WorkflowContext,
   WorkflowResult,
   WorkflowPlugin,

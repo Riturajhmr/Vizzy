@@ -1,3 +1,7 @@
+import type { Intent } from './intent'
+
+export type { Intent }
+
 export interface Message {
   id: string
   role: 'user' | 'assistant' | 'system'
@@ -12,13 +16,6 @@ export interface Asset {
   name: string
   mimeType: string
   sizeBytes: number
-}
-
-export interface Intent {
-  type: string
-  description: string
-  parameters: Record<string, unknown>
-  confidence: number
 }
 
 export interface WorkflowContext {

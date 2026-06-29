@@ -1,12 +1,12 @@
 import type { Intent, WorkflowContext, WorkflowResult } from '@/types'
 import { resolve } from '@/workflows/registry'
 
-function buildFallbackResult(_intent: Intent): WorkflowResult {
+function buildFallbackResult(intent: Intent): WorkflowResult {
   return {
     type: 'fallback',
     status: 'error',
     payload: {
-      message: 'No workflow matched this intent. Please rephrase your request.',
+      message: `No workflow could handle "${intent.type}". Please try rephrasing your request.`,
     },
     metadata: {
       pluginId: 'system',
@@ -17,7 +17,7 @@ function buildFallbackResult(_intent: Intent): WorkflowResult {
 
 export async function route(
   intent: Intent,
-  context: WorkflowContext
+  context: WorkflowContext,
 ): Promise<WorkflowResult> {
   const plugin = resolve(intent)
 
@@ -25,10 +25,15 @@ export async function route(
     return buildFallbackResult(intent)
   }
 
-  const result = await plugin.execute(context)
-  const isValid = plugin.validate(result)
+  let result: WorkflowResult
+  try {
+    result = await plugin.execute(context)
+  } catch (err) {
+    console.error(`[WorkflowRouter] Plugin "${plugin.id}" threw during execution:`, err)
+    return buildFallbackResult(intent)
+  }
 
-  if (!isValid) {
+  if (!plugin.validate(result)) {
     return buildFallbackResult(intent)
   }
 
