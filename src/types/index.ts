@@ -8,4 +8,5 @@ export type {
   WorkflowResult,
   WorkflowPlugin,
 } from './plugin'
+export type { Conversation, ConversationSession, StreamingState } from './conversation'
 export { ErrorCode, AppError, ApiError, isAppError } from './errors'

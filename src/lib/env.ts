@@ -14,12 +14,17 @@ const envSchema = z.object({
   NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().optional(),
 })
 
+type Env = z.infer<typeof envSchema>
+
 const parsed = envSchema.safeParse(process.env)
 
-// Phase 1A: log errors but do not throw — dev server starts without real credentials.
-// Remove this guard before Phase 2 when AI/DB access begins.
-if (!parsed.success) {
-  console.error('[env] Missing or invalid environment variables:', parsed.error.flatten().fieldErrors)
+// During the Next.js build phase, routes are analyzed but never executed.
+// Skip the throw so the build can complete; missing vars will still cause
+// runtime failures in actual server invocations.
+if (!parsed.success && process.env.NEXT_PHASE !== 'phase-production-build') {
+  throw new Error(
+    `[env] Missing or invalid environment variables:\n${JSON.stringify(parsed.error.flatten().fieldErrors, null, 2)}`,
+  )
 }
 
-export const env = (parsed.success ? parsed.data : {}) as z.infer<typeof envSchema>
+export const env = (parsed.data ?? {}) as Env

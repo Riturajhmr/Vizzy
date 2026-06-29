@@ -52,4 +52,18 @@ describe('MessageBubble', () => {
     const time = screen.getByRole('time')
     expect(time).toHaveAttribute('dateTime', iso)
   })
+
+  it('renders nothing for an empty assistant placeholder', () => {
+    const { container } = render(
+      <MessageBubble message={makeMessage({ role: 'assistant', content: '' })} />,
+    )
+    expect(container.firstChild).toBeNull()
+  })
+
+  it('renders an empty user message normally', () => {
+    const { container } = render(
+      <MessageBubble message={makeMessage({ role: 'user', content: '' })} />,
+    )
+    expect(container.querySelector('[data-role="user"]')).toBeInTheDocument()
+  })
 })

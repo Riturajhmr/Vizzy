@@ -38,3 +38,10 @@ export interface ImageResult {
   url: string
   model: string
 }
+
+export interface ChatStreamOptions {
+  messages: Array<{ role: 'user' | 'assistant'; content: string }>
+  system?: string
+  model?: string
+  abortSignal?: AbortSignal
+}

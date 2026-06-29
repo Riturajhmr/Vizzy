@@ -12,7 +12,6 @@ const EXAMPLE_PROMPTS = [
 export function EmptyChatState({ onSelectPrompt }: EmptyChatStateProps) {
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-8 px-6 py-12">
-      {/* Brand mark */}
       <div className="flex flex-col items-center gap-4">
         <div
           className="flex size-14 items-center justify-center rounded-2xl bg-primary shadow-lg"
@@ -24,24 +23,24 @@ export function EmptyChatState({ onSelectPrompt }: EmptyChatStateProps) {
           <h1 className="text-2xl font-semibold tracking-tight text-foreground">
             What do you want to create?
           </h1>
-          <p className="mt-1.5 text-sm text-muted-foreground max-w-sm">
+          <p className="mt-1.5 max-w-sm text-sm text-muted-foreground">
             Describe your idea in plain language. Vizzy understands your intent and routes to the right creative workflow automatically.
           </p>
         </div>
       </div>
 
-      {/* Example prompts */}
       <div className="grid w-full max-w-lg grid-cols-1 gap-2 sm:grid-cols-2">
         {EXAMPLE_PROMPTS.map((item) => (
           <button
             key={item.label}
+            type="button"
             onClick={() => onSelectPrompt(item.prompt)}
             className="group flex items-start gap-3 rounded-xl border border-border bg-card p-4 text-left transition-colors hover:border-ring hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
             <span className="text-lg" aria-hidden="true">{item.emoji}</span>
             <div>
               <p className="text-sm font-medium text-foreground">{item.label}</p>
-              <p className="mt-0.5 text-xs text-muted-foreground line-clamp-2">{item.prompt}</p>
+              <p className="mt-0.5 line-clamp-2 text-xs text-muted-foreground">{item.prompt}</p>
             </div>
           </button>
         ))}

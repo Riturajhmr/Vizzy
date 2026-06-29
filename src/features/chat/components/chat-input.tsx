@@ -1,18 +1,19 @@
 'use client'
 
 import { useState, type KeyboardEvent } from 'react'
-import { ArrowUp } from 'lucide-react'
+import { ArrowUp, Square } from 'lucide-react'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
 interface ChatInputProps {
   onSubmit: (content: string) => void
+  onCancel?: () => void
   isLoading?: boolean
   placeholder?: string
 }
 
-export function ChatInput({ onSubmit, isLoading = false, placeholder }: ChatInputProps) {
+export function ChatInput({ onSubmit, onCancel, isLoading = false, placeholder }: ChatInputProps) {
   const [value, setValue] = useState('')
 
   const canSubmit = value.trim().length > 0 && !isLoading
@@ -43,16 +44,28 @@ export function ChatInput({ onSubmit, isLoading = false, placeholder }: ChatInpu
         aria-label="Chat input"
         className="max-h-40 flex-1 border-0 bg-transparent p-0 text-sm shadow-none focus-visible:border-0 focus-visible:ring-0"
       />
-      <Button
-        size="icon-sm"
-        variant={canSubmit ? 'default' : 'ghost'}
-        onClick={submit}
-        disabled={!canSubmit}
-        aria-label="Send message"
-        className={cn('shrink-0 transition-all', canSubmit ? 'opacity-100' : 'opacity-40')}
-      >
-        <ArrowUp />
-      </Button>
+      {isLoading && onCancel ? (
+        <Button
+          size="icon-sm"
+          variant="ghost"
+          onClick={onCancel}
+          aria-label="Stop generating"
+          className="shrink-0 transition-all"
+        >
+          <Square className="size-3.5 fill-current" />
+        </Button>
+      ) : (
+        <Button
+          size="icon-sm"
+          variant={canSubmit ? 'default' : 'ghost'}
+          onClick={submit}
+          disabled={!canSubmit}
+          aria-label="Send message"
+          className={cn('shrink-0 transition-all', canSubmit ? 'opacity-100' : 'opacity-40')}
+        >
+          <ArrowUp />
+        </Button>
+      )}
     </div>
   )
 }

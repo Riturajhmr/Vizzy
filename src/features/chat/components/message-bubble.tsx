@@ -13,6 +13,9 @@ function formatTime(iso: string): string {
 export function MessageBubble({ message }: MessageBubbleProps) {
   const isUser = message.role === 'user'
 
+  // Don't render an empty assistant placeholder — TypingIndicator covers this state
+  if (!isUser && message.content === '') return null
+
   return (
     <div
       className={cn('flex items-end gap-3 px-4 py-1', isUser ? 'flex-row-reverse' : 'flex-row')}
@@ -39,7 +42,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
           {message.content}
         </div>
         <time
-          className="text-[11px] text-muted-foreground px-1"
+          className="px-1 text-[11px] text-muted-foreground"
           dateTime={message.createdAt}
           aria-label={formatTime(message.createdAt)}
         >
